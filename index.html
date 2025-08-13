@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickTask - Hyperlocal Micro Jobs</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+   <!-- Header -->
+<header class="app-header">
+    <div class="header-left">
+        <div class="app-logo">
+            <i class="fas fa-leaf"></i>
+            <span>QuickTask</span>
+        </div>
+        <div class="location-chip">
+            <i class="fas fa-map-marker-alt"></i>
+            <span id="location-text">Within 1km • Auto-updating</span>
+        </div>
+    </div>
+    <div class="view-toggle">
+        <button id="list-view-btn" class="active"><i class="fas fa-list"></i></button>
+        <button id="map-view-btn"><i class="fas fa-map"></i></button>
+    </div>
+</header>
+
+
+        <!-- Main Content -->
+        <main class="app-main">
+            <!-- List View (Default) -->
+            <div id="list-view" class="view-container active">
+                <div class="job-feed">
+                    <!-- Job cards will be inserted here by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Map View (Hidden by default) -->
+            <div id="map-view" class="view-container">
+                <div class="map-placeholder">
+                    <i class="fas fa-map-marked-alt"></i>
+                    <p>Map view would show jobs in your area</p>
+                </div>
+            </div>
+
+            <!-- Empty State (Hidden by default) -->
+            <div id="empty-state" class="view-container">
+                <div class="empty-state-content">
+                    <img src="https://cdn-icons-png.flaticon.com/512/4076/4076478.png" alt="No jobs" width="120">
+                    <h3>No jobs nearby</h3>
+                    <p>Be the first to post in your area!</p>
+                    <button id="post-job-btn" class="primary-btn">Post a Job</button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <button class="nav-btn active">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </button>
+            <button class="nav-btn">
+                <i class="fas fa-bell"></i>
+                <span>Alerts</span>
+            </button>
+            <button class="nav-btn" id="center-post-btn">
+                <i class="fas fa-plus"></i>
+            </button>
+            <button class="nav-btn">
+                <i class="fas fa-inbox"></i>
+                <span>Inbox</span>
+            </button>
+            <button class="nav-btn">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </button>
+        </nav>
+
+        <!-- Job Posting Modal -->
+        <div id="post-job-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Post a Quick Job</h3>
+                    <button class="close-modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="step" id="step1">
+                        <h4>What do you need help with?</h4>
+                        <div class="job-type-grid">
+                            <button class="job-type-btn" data-type="grocery">
+                                <i class="fas fa-shopping-basket"></i>
+                                <span>Grocery Pickup</span>
+                            </button>
+                            <button class="job-type-btn" data-type="pet">
+                                <i class="fas fa-paw"></i>
+                                <span>Pet Care</span>
+                            </button>
+                            <button class="job-type-btn" data-type="repair">
+                                <i class="fas fa-tools"></i>
+                                <span>Quick Repair</span>
+                            </button>
+                            <button class="job-type-btn" data-type="delivery">
+                                <i class="fas fa-motorcycle"></i>
+                                <span>Delivery</span>
+                            </button>
+                            <button class="job-type-btn" data-type="tutoring">
+                                <i class="fas fa-book"></i>
+                                <span>Tutoring</span>
+                            </button>
+                            <button class="job-type-btn" data-type="cleaning">
+                                <i class="fas fa-broom"></i>
+                                <span>Cleaning</span>
+                            </button>
+                            <button class="job-type-btn" data-type="other">
+                                <i class="fas fa-ellipsis-h"></i>
+                                <span>Other</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="step" id="step2">
+                        <h4>Job Details</h4>
+                        <div class="form-group">
+                            <label for="job-title">Title</label>
+                            <input type="text" id="job-title" placeholder="e.g., Pick up groceries from More Megastore">
+                        </div>
+                        <div class="form-group">
+                            <label for="job-location">Location</label>
+                            <input type="text" id="job-location" placeholder="Enter location or tap to use current">
+                        </div>
+                        <div class="form-group">
+                            <label for="job-duration">Estimated Duration (minutes)</label>
+                            <input type="range" id="job-duration" min="15" max="60" value="30">
+                            <div class="slider-value"><span id="duration-value">30</span> mins</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="job-description">Description</label>
+                            <textarea id="job-description" rows="3" placeholder="Add any important details..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="step" id="step3">
+                        <h4>Set Payment</h4>
+                        <div class="payment-info">
+                            <div class="average-price">
+                                <i class="fas fa-info-circle"></i>
+                                <span>Nearby average: ₹150-300</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="job-payment">Amount (₹)</label>
+                                <input type="number" id="job-payment" min="10" value="200">
+                            </div>
+                            <div class="urgent-toggle">
+                                <input type="checkbox" id="urgent-job">
+                                <label for="urgent-job">
+                                    <span class="toggle-switch"></span>
+                                    <span>Boost visibility (urgent) +10%</span>
+                                </label>
+                            </div>
+                            <div class="escrow-notice">
+                                <i class="fas fa-lock"></i>
+                                <span>₹<span id="escrow-amount">220</span> will be held securely until job completion</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-navigation">
+                        <button class="secondary-btn" id="prev-step">Back</button>
+                        <button class="primary-btn" id="next-step">Next</button>
+                        <button class="primary-btn" id="post-job" style="display: none;">Post Job</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Job Detail Modal -->
+        <div id="job-detail-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Job Details</h3>
+                    <button class="close-modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="job-detail-header">
+                        <div class="job-type-icon">
+                            <i class="fas fa-shopping-basket"></i>
+                        </div>
+                        <div class="job-title">
+                            <h4>Grocery Pickup @More Megastore</h4>
+                            <div class="job-meta">
+                                <span><i class="fas fa-clock"></i> 30 mins</span>
+                                <span><i class="fas fa-rupee-sign"></i> 250</span>
+                                <span><i class="fas fa-map-marker-alt"></i> 0.4km</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="job-description">
+                        <p>Need someone to pick up my weekly groceries from More Megastore. I'll share the list via chat after acceptance.</p>
+                    </div>
+                    
+                    <div class="job-poster">
+                        <div class="poster-info">
+                            <div class="poster-avatar">
+                                <img src="https://randomuser.me/api/portraits/women/45.jpg" alt="Poster">
+                            </div>
+                            <div class="poster-details">
+                                <h5>Priya M.</h5>
+                                <div class="poster-rating">
+                                    <i class="fas fa-star"></i>
+                                    <span>4.8 (12 jobs posted)</span>
+                                    <i class="fas fa-check-circle verified"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="job-actions">
+                        <button class="primary-btn" id="accept-job-btn">
+                            <i class="fas fa-check"></i> Accept Job
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Acceptance Confirmation -->
+        <div id="acceptance-modal" class="modal">
+            <div class="modal-content small">
+                <div class="modal-body">
+                    <div class="confirmation-message">
+                        <div class="confirmation-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h4>Job Accepted!</h4>
+                        <p>You've accepted the Grocery Pickup job. We've notified Priya and shared her contact details.</p>
+                        
+                        <div class="job-summary">
+                            <div class="summary-item">
+                                <i class="fas fa-clock"></i>
+                                <span>Complete by: Today, 6:30 PM</span>
+                            </div>
+                            <div class="summary-item">
+                                <i class="fas fa-rupee-sign"></i>
+                                <span>You'll earn: ₹250</span>
+                            </div>
+                        </div>
+                        
+                        <button class="primary-btn" id="view-job-details">View Job Details</button>
+                        <button class="secondary-btn" id="chat-now">Chat with Priya</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
